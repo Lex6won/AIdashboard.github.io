@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경기도 AI 등록제 서비스 현황</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        .small-chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <!-- 헤더 -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-6 py-4">
+                <div class="text-center">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">경기도 AI 등록제 서비스 현황</h1>
+                    <p class="text-gray-600">2025년 6월 기준 종합 분석 대시보드 (최신 데이터 반영)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <div class="bg-white border-b">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex space-x-8 overflow-x-auto">
+                    <button onclick="setActiveTab('overview')" class="tab-button flex items-center space-x-2 py-4 px-2 border-b-2 whitespace-nowrap transition-colors border-blue-500 text-blue-600 font-medium" data-tab="overview">
+                        <span>📊</span>
+                        <span>전체 현황</span>
+                    </button>
+                    <button onclick="setActiveTab('category')" class="tab-button flex items-center space-x-2 py-4 px-2 border-b-2 whitespace-nowrap transition-colors border-transparent text-gray-500 hover:text-gray-700" data-tab="category">
+                        <span>📈</span>
+                        <span>분야별 분석</span>
+                    </button>
+                    <button onclick="setActiveTab('adoption')" class="tab-button flex items-center space-x-2 py-4 px-2 border-b-2 whitespace-nowrap transition-colors border-transparent text-gray-500 hover:text-gray-700" data-tab="adoption">
+                        <span>🏛️</span>
+                        <span>도입 지자체</span>
+                    </button>
+                    <button onclick="setActiveTab('operating')" class="tab-button flex items-center space-x-2 py-4 px-2 border-b-2 whitespace-nowrap transition-colors border-transparent text-gray-500 hover:text-gray-700" data-tab="operating">
+                        <span>⚙️</span>
+                        <span>운영 기관</span>
+                    </button>
+                    <button onclick="setActiveTab('timeline')" class="tab-button flex items-center space-x-2 py-4 px-2 border-b-2 whitespace-nowrap transition-colors border-transparent text-gray-500 hover:text-gray-700" data-tab="timeline">
+                        <span>📅</span>
+                        <span>시계열 분석</span>
+                    </button>
+                    <button onclick="setActiveTab('target')" class="tab-button flex items-center space-x-2 py-4 px-2 border-b-2 whitespace-nowrap transition-colors border-transparent text-gray-500 hover:text-gray-700" data-tab="target">
+                        <span>👥</span>
+                        <span>서비스 대상</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 콘텐츠 영역 -->
+        <div class="max-w-7xl mx-auto px-6 py-6">
+            <!-- 전체 현황 탭 -->
+            <div id="overview-content" class="tab-content space-y-6">
+                <!-- 주요 지표 카드 -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">핵심 지표</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div class="text-center p-3 bg-blue-50 rounded-lg">
+                            <p class="text-2xl font-bold text-blue-600">73</p>
+                            <p class="text-sm text-gray-600">총 AI 서비스</p>
+                        </div>
+                        <div class="text-center p-3 bg-green-50 rounded-lg">
+                            <p class="text-2xl font-bold text-green-600">19</p>
+                            <p class="text-sm text-gray-600">도입 지자체</p>
+                        </div>
+                        <div class="text-center p-3 bg-purple-50 rounded-lg">
+                            <p class="text-2xl font-bold text-purple-600">36</p>
+                            <p class="text-sm text-gray-600">운영 기관</p>
+                        </div>
+                        <div class="text-center p-3 bg-yellow-50 rounded-lg">
+                            <p class="text-2xl font-bold text-yellow-600">8</p>
+                            <p class="text-sm text-gray-600">활용 분야</p>
+                        </div>
+                        <div class="text-center p-3 bg-red-50 rounded-lg">
+                            <p class="text-2xl font-bold text-red-600">22</p>
+                            <p class="text-sm text-gray-600">2024년 신규</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 주요 인사이트 -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">주요 인사이트</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <h3 class="font-bold text-blue-800 mb-2">가장 활발한 분야</h3>
+                            <p class="text-blue-600">복지 분야에서 18개의 AI 서비스가 운영 중으로 가장 활발합니다.</p>
+                        </div>
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <h3 class="font-bold text-green-800 mb-2">주요 도입 지자체</h3>
+                            <p class="text-green-600">경기도가 21개 서비스로 가장 많이 도입했으며, 복지와 행정 분야에 집중되어 있습니다.</p>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <h3 class="font-bold text-purple-800 mb-2">운영 체계 다양성</h3>
+                            <p class="text-purple-600">총 36개 운영 기관이 참여하여 지자체, 공사/공단, 전문기관 등 다양한 운영 모델을 보여줍니다.</p>
+                        </div>
+                        <div class="p-4 bg-yellow-50 rounded-lg">
+                            <h3 class="font-bold text-yellow-800 mb-2">분야별 특성</h3>
+                            <p class="text-yellow-600">지자체별로 특화된 분야가 다르며, 경기도는 전 분야, 성남시는 복지 중심으로 도입했습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 요약 차트 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">활용분야별 현황</h2>
+                        <div class="small-chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">도입 연도별 추이</h2>
+                        <div class="small-chart-container">
+                            <canvas id="yearChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 분야별 분석 탭 -->
+            <div id="category-content" class="tab-content space-y-6" style="display: none;">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">활용분야별 상세 현황</h2>
+                        <div class="chart-container">
+                            <canvas id="categoryDetailChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">AI 서비스 유형별 분석</h2>
+                        <div class="chart-container">
+                            <canvas id="aiTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 분야별 상세 테이블 -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">분야별 상세 분포</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-3">활용분야별</h3>
+                            <div class="space-y-2" id="categoryTable"></div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-3">AI 유형별</h3>
+                            <div class="space-y-2" id="aiTypeTable"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 도입 지자체 탭 -->
+            <div id="adoption-content" class="tab-content space-y-6" style="display: none;">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">도입 지자체별 현황 (상위 10개)</h2>
+                        <div class="chart-container">
+                            <canvas id="adoptionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">지자체별 도입 분야 현황</h2>
+                        <div class="chart-container">
+                            <canvas id="adoptionCategoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 도입 지자체 상세 현황 테이블 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">전체 도입 지자체 현황</h2>
+                        <div class="max-h-96 overflow-y-auto">
+                            <table class="w-full text-sm" id="adoptionTable">
+                                <thead class="sticky top-0 bg-gray-50">
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-2 px-3">순위</th>
+                                        <th class="text-left py-2 px-3">지자체명</th>
+                                        <th class="text-right py-2 px-3">도입 서비스 수</th>
+                                        <th class="text-right py-2 px-3">비율</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adoptionTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">지자체별 도입 분야 분석</h2>
+                        <div class="max-h-96 overflow-y-auto">
+                            <table class="w-full text-xs" id="adoptionDetailTable">
+                                <thead class="sticky top-0 bg-gray-50">
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-2 px-2">지자체명</th>
+                                        <th class="text-center py-2 px-1">복지</th>
+                                        <th class="text-center py-2 px-1">행정</th>
+                                        <th class="text-center py-2 px-1">교통</th>
+                                        <th class="text-center py-2 px-1">의료</th>
+                                        <th class="text-center py-2 px-1">교육</th>
+                                        <th class="text-center py-2 px-1">기타</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adoptionDetailTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 text-xs text-gray-500">
+                            <p>* 주요 12개 지자체의 분야별 도입 현황</p>
+                            <p>* 기타: 산업·경제, 문화·관광, 환경·에너지 합계</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 운영 기관 탭 -->
+            <div id="operating-content" class="tab-content space-y-6" style="display: none;">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">운영 기관별 현황 (상위 10개)</h2>
+                        <div class="chart-container">
+                            <canvas id="operatingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">운영 기관 유형별 분포</h2>
+                        <div class="space-y-4" id="operatingTypeInfo"></div>
+                    </div>
+                </div>
+
+                <!-- 운영 기관 상세 현황 테이블 -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">전체 운영 기관 현황</h2>
+                    <div class="max-h-96 overflow-y-auto">
+                        <table class="w-full text-sm" id="operatingTable">
+                            <thead class="sticky top-0 bg-gray-50">
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-2 px-3">순위</th>
+                                    <th class="text-left py-2 px-3">운영 기관명</th>
+                                    <th class="text-right py-2 px-3">운영 서비스 수</th>
+                                    <th class="text-center py-2 px-3">기관 유형</th>
+                                </tr>
+                            </thead>
+                            <tbody id="operatingTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 시계열 분석 탭 -->
+            <div id="timeline-content" class="tab-content space-y-6" style="display: none;">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">연도별 AI 서비스 도입 추이</h2>
+                    <div class="chart-container">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">연도별 상세 현황 (막대 그래프)</h2>
+                        <div class="small-chart-container">
+                            <canvas id="timelineBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">연도별 증감 분석</h2>
+                        <div class="space-y-4" id="yearAnalysis"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 서비스 대상 탭 -->
+            <div id="target-content" class="tab-content space-y-6" style="display: none;">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">서비스 대상별 분포 (원형 차트)</h2>
+                        <div class="chart-container">
+                            <canvas id="targetPieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">서비스 대상별 현황 (막대 차트)</h2>
+                        <div class="chart-container">
+                            <canvas id="targetBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">서비스 대상별 상세 분석</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="targetDetails"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 데이터 정의
+        const data = {
+            total: 73,
+            categories: [
+                ["복지", 18], 
+                ["행정", 17], 
+                ["의료", 12], 
+                ["교통·안전", 11], 
+                ["교육", 5], 
+                ["산업·경제", 4], 
+                ["문화·관광", 3], 
+                ["환경·에너지", 3]
+            ],
+            adoptionAgencies: [
+                ["경기도", 21], 
+                ["성남시", 8], 
+                ["용인시", 7], 
+                ["고양시", 6], 
+                ["화성시", 6], 
+                ["수원시", 5], 
+                ["과천시", 3], 
+                ["광명시", 2], 
+                ["하남시", 2], 
+                ["구리시", 2], 
+                ["김포시", 2], 
+                ["연천군", 2], 
+                ["양주시", 1], 
+                ["군포시", 1], 
+                ["부천시", 1], 
+                ["안성시", 1], 
+                ["동두천시", 1], 
+                ["평택시", 1], 
+                ["양평군", 1]
+            ],
+            operatingAgencies: [
+                ["용인시", 7],
+                ["경기도", 5], 
+                ["화성시", 5], 
+                ["성남시", 5], 
+                ["고양시", 4], 
+                ["성남도시개발공사", 3], 
+                ["과천시", 3], 
+                ["수원시", 3], 
+                ["광명시", 2], 
+                ["수원도시공사", 2], 
+                ["고양산업진흥원", 2], 
+                ["경기주택도시공사", 2], 
+                ["경기도사회서비스원", 2], 
+                ["경기테크노파크", 2], 
+                ["연천군", 2],
+                ["경기도농업기술원", 1],
+                ["경기도인재개발원", 1],
+                ["경기관광공사", 1],
+                ["하남시", 1],
+                ["양주시", 1],
+                ["구리도시공사", 1],
+                ["경기교통공사", 1],
+                ["김포시", 1],
+                ["군포시", 1],
+                ["구리시", 1],
+                ["부천시", 1],
+                ["김포도시관리공사", 1],
+                ["안성시", 1],
+                ["동두천시", 1],
+                ["경기도경제과학진흥원", 1],
+                ["경기도일자리재단", 1],
+                ["평택시 상하수도사업소", 1],
+                ["경기도주식회사", 1],
+                ["양평군", 1],
+                ["경기문화재단", 1],
+                ["경기환경에너지진흥원", 1]
+            ],
+            targets: [
+                ["일반 시민", 28], 
+                ["기타", 21], 
+                ["공무원/직원", 7], 
+                ["장애인", 6], 
+                ["노인/고령자", 6], 
+                ["청년/학생", 3], 
+                ["교통약자", 1], 
+                ["취약계층", 1]
+            ],
+            aiTypes: [
+                ["자연어처리", 15], 
+                ["기계학습/머신러닝", 12], 
+                ["생성형 AI", 10], 
+                ["딥러닝", 8], 
+                ["음성인식", 8], 
+                ["영상/이미지 분석", 6], 
+                ["챗봇", 5], 
+                ["로봇/자율주행", 4], 
+                ["기타", 5]
+            ],
+            yearData: [
+                ["2020", 2], 
+                ["2021", 2], 
+                ["2022", 1], 
+                ["2023", 11], 
+                ["2024", 22], 
+                ["2025", 16], 
+                ["2026", 2]
+            ],
+            adoptionCategoryData: [
+                { name: "경기도", 복지: 6, 행정: 5, "교통·안전": 3, 의료: 2, 교육: 2, "산업·경제": 2, "문화·관광": 1 },
+                { name: "성남시", 복지: 4, 행정: 2, "교통·안전": 1, 교육: 1 },
+                { name: "용인시", 복지: 3, 행정: 2, 의료: 1, "교통·안전": 1 },
+                { name: "고양시", 복지: 2, "교통·안전": 2, 행정: 1, 의료: 1 },
+                { name: "화성시", 복지: 3, 행정: 1, "환경·에너지": 1, 의료: 1 },
+                { name: "수원시", "교통·안전": 2, 행정: 2, 복지: 1 },
+                { name: "과천시", 교육: 1, 행정: 1, "문화·관광": 1 },
+                { name: "광명시", 교육: 2 },
+                { name: "하남시", 복지: 1, 의료: 1 },
+                { name: "구리시", 복지: 1, 행정: 1 },
+                { name: "김포시", "교통·안전": 1, 복지: 1 },
+                { name: "연천군", 행정: 1, "환경·에너지": 1 }
+            ]
+        };
+
+        const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
+        let charts = {};
+
+        // 탭 전환 함수
+        function setActiveTab(tabId) {
+            // 모든 탭 콘텐츠 숨기기
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // 모든 탭 버튼 비활성화
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.className = button.className.replace('border-blue-500 text-blue-600 font-medium', 'border-transparent text-gray-500 hover:text-gray-700');
+            });
+            
+            // 선택된 탭 활성화
+            document.getElementById(tabId + '-content').style.display = 'block';
+            document.querySelector(`[data-tab="${tabId}"]`).className = 
+                document.querySelector(`[data-tab="${tabId}"]`).className.replace('border-transparent text-gray-500 hover:text-gray-700', 'border-blue-500 text-blue-600 font-medium');
+            
+            // 차트 렌더링
+            setTimeout(() => {
+                renderChartsForTab(tabId);
+            }, 100);
+        }
+
+        // 차트 렌더링 함수
+        function renderChartsForTab(tabId) {
+            switch(tabId) {
+                case 'overview':
+                    renderOverviewCharts();
+                    break;
+                case 'category':
+                    renderCategoryCharts();
+                    renderCategoryTable();
+                    break;
+                case 'adoption':
+                    renderAdoptionCharts();
+                    renderAdoptionTables();
+                    break;
+                case 'operating':
+                    renderOperatingCharts();
+                    renderOperatingTable();
+                    break;
+                case 'timeline':
+                    renderTimelineCharts();
+                    renderYearAnalysis();
+                    break;
+                case 'target':
+                    renderTargetCharts();
+                    renderTargetDetails();
+                    break;
+            }
+        }
+
+        function renderOverviewCharts() {
+            // 활용분야별 현황 차트
+            if (charts.categoryChart) charts.categoryChart.destroy();
+            const ctx1 = document.getElementById('categoryChart').getContext('2d');
+            charts.categoryChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: data.categories.map(item => item[0]),
+                    datasets: [{
+                        label: '서비스 수',
+                        data: data.categories.map(item => item[1]),
+                        backgroundColor: '#0088FE'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 연도별 추이 차트
+            if (charts.yearChart) charts.yearChart.destroy();
+            const ctx2 = document.getElementById('yearChart').getContext('2d');
+            charts.yearChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: data.yearData.map(item => item[0]),
+                    datasets: [{
+                        label: '서비스 수',
+                        data: data.yearData.map(item => item[1]),
+                        borderColor: '#00C49F',
+                        backgroundColor: 'rgba(0, 196, 159, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#00C49F'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderCategoryCharts() {
+            // 활용분야별 상세 현황
+            if (charts.categoryDetailChart) charts.categoryDetailChart.destroy();
+            const ctx1 = document.getElementById('categoryDetailChart').getContext('2d');
+            charts.categoryDetailChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: data.categories.map(item => item[0]),
+                    datasets: [{
+                        label: '서비스 수',
+                        data: data.categories.map(item => item[1]),
+                        backgroundColor: '#0088FE'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // AI 서비스 유형별 분석
+            if (charts.aiTypeChart) charts.aiTypeChart.destroy();
+            const ctx2 = document.getElementById('aiTypeChart').getContext('2d');
+            charts.aiTypeChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: data.aiTypes.map(item => item[0]),
+                    datasets: [{
+                        label: '서비스 수',
+                        data: data.aiTypes.map(item => item[1]),
+                        backgroundColor: '#FF8042'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderCategoryTable() {
+            // 활용분야별 테이블
+            const categoryTableEl = document.getElementById('categoryTable');
+            categoryTableEl.innerHTML = data.categories.map(([name, count]) => 
+                `<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <span>${name}</span>
+                    <span class="font-bold text-blue-600">${count}개</span>
+                </div>`
+            ).join('');
+
+            // AI 유형별 테이블
+            const aiTypeTableEl = document.getElementById('aiTypeTable');
+            aiTypeTableEl.innerHTML = data.aiTypes.slice(0, 8).map(([name, count]) => 
+                `<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <span class="text-sm">${name}</span>
+                    <span class="font-bold text-orange-600">${count}개</span>
+                </div>`
+            ).join('');
+        }
+
+        function renderAdoptionCharts() {
+            // 도입 지자체별 현황 (상위 10개)
+            if (charts.adoptionChart) charts.adoptionChart.destroy();
+            const ctx1 = document.getElementById('adoptionChart').getContext('2d');
+            const topAdoption = data.adoptionAgencies.slice(0, 10);
+            charts.adoptionChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: topAdoption.map(item => item[0]),
+                    datasets: [{
+                        label: '도입 서비스 수',
+                        data: topAdoption.map(item => item[1]),
+                        backgroundColor: '#0088FE'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 지자체별 도입 분야 현황 (스택 차트)
+            if (charts.adoptionCategoryChart) charts.adoptionCategoryChart.destroy();
+            const ctx2 = document.getElementById('adoptionCategoryChart').getContext('2d');
+            const fields = ['복지', '행정', '교통·안전', '의료', '교육', '산업·경제', '문화·관광', '환경·에너지'];
+            const fieldColors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
+            
+            charts.adoptionCategoryChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: data.adoptionCategoryData.map(item => item.name),
+                    datasets: fields.map((field, index) => ({
+                        label: field,
+                        data: data.adoptionCategoryData.map(item => item[field] || 0),
+                        backgroundColor: fieldColors[index]
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderAdoptionTables() {
+            // 전체 도입 지자체 현황 테이블
+            const tbody1 = document.getElementById('adoptionTableBody');
+            tbody1.innerHTML = data.adoptionAgencies.map(([name, count], index) => 
+                `<tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-2 px-3">${index + 1}</td>
+                    <td class="py-2 px-3">${name}</td>
+                    <td class="text-right py-2 px-3 font-medium">${count}개</td>
+                    <td class="text-right py-2 px-3 text-gray-600">${((count / data.total) * 100).toFixed(1)}%</td>
+                </tr>`
+            ).join('');
+
+            // 지자체별 도입 분야 분석 테이블
+            const tbody2 = document.getElementById('adoptionDetailTableBody');
+            tbody2.innerHTML = data.adoptionCategoryData.map((agency) => {
+                const 복지 = agency.복지 ? `<span class="bg-blue-100 text-blue-800 px-1 rounded text-xs">${agency.복지}</span>` : '-';
+                const 행정 = agency.행정 ? `<span class="bg-green-100 text-green-800 px-1 rounded text-xs">${agency.행정}</span>` : '-';
+                const 교통 = agency['교통·안전'] ? `<span class="bg-yellow-100 text-yellow-800 px-1 rounded text-xs">${agency['교통·안전']}</span>` : '-';
+                const 의료 = agency.의료 ? `<span class="bg-red-100 text-red-800 px-1 rounded text-xs">${agency.의료}</span>` : '-';
+                const 교육 = agency.교육 ? `<span class="bg-purple-100 text-purple-800 px-1 rounded text-xs">${agency.교육}</span>` : '-';
+                const 기타합계 = (agency['산업·경제'] || 0) + (agency['문화·관광'] || 0) + (agency['환경·에너지'] || 0);
+                const 기타 = 기타합계 ? `<span class="bg-gray-100 text-gray-800 px-1 rounded text-xs">${기타합계}</span>` : '-';
+                
+                return `<tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-2 px-2 font-medium text-xs">${agency.name}</td>
+                    <td class="text-center py-2 px-1">${복지}</td>
+                    <td class="text-center py-2 px-1">${행정}</td>
+                    <td class="text-center py-2 px-1">${교통}</td>
+                    <td class="text-center py-2 px-1">${의료}</td>
+                    <td class="text-center py-2 px-1">${교육}</td>
+                    <td class="text-center py-2 px-1">${기타}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function renderOperatingCharts() {
+            // 운영 기관별 현황 (상위 10개)
+            if (charts.operatingChart) charts.operatingChart.destroy();
+            const ctx1 = document.getElementById('operatingChart').getContext('2d');
+            const topOperating = data.operatingAgencies.slice(0, 10);
+            charts.operatingChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: topOperating.map(item => item[0]),
+                    datasets: [{
+                        label: '운영 서비스 수',
+                        data: topOperating.map(item => item[1]),
+                        backgroundColor: '#FF8042'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 운영 기관 유형별 분포 정보
+            const 지자체수 = data.operatingAgencies.filter(([name]) => 
+                name.includes('시') || name.includes('군') || name.includes('구') || name === '경기도'
+            ).length;
+            const 공사공단수 = data.operatingAgencies.filter(([name]) => 
+                name.includes('공사') || name.includes('공단')
+            ).length;
+            const 전문기관수 = data.operatingAgencies.filter(([name]) => 
+                name.includes('진흥') || name.includes('테크노파크') || name.includes('재단')
+            ).length;
+
+            document.getElementById('operatingTypeInfo').innerHTML = `
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-bold text-blue-800 mb-2">지방자치단체</h3>
+                    <p class="text-blue-600">직접 운영하는 지자체가 다수를 차지합니다.</p>
+                    <div class="text-2xl font-bold text-blue-800 mt-2">${지자체수}개 기관</div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h3 class="font-bold text-green-800 mb-2">공사/공단</h3>
+                    <p class="text-green-600">도시개발공사, 주택도시공사 등 공공기관입니다.</p>
+                    <div class="text-2xl font-bold text-green-800 mt-2">${공사공단수}개 기관</div>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <h3 class="font-bold text-purple-800 mb-2">전문기관</h3>
+                    <p class="text-purple-600">테크노파크, 진흥원 등 전문 운영기관입니다.</p>
+                    <div class="text-2xl font-bold text-purple-800 mt-2">${전문기관수}개 기관</div>
+                </div>
+            `;
+        }
+
+        function renderOperatingTable() {
+            const tbody = document.getElementById('operatingTableBody');
+            tbody.innerHTML = data.operatingAgencies.map(([name, count], index) => {
+                let type = '기타';
+                if (name.includes('시') || name.includes('군') || name.includes('구') || name === '경기도') {
+                    type = '지자체';
+                } else if (name.includes('공사') || name.includes('공단')) {
+                    type = '공사/공단';
+                } else if (name.includes('진흥') || name.includes('테크노파크') || name.includes('재단')) {
+                    type = '전문기관';
+                }
+                
+                const typeClass = type === '지자체' ? 'bg-blue-100 text-blue-800' :
+                               type === '공사/공단' ? 'bg-green-100 text-green-800' :
+                               type === '전문기관' ? 'bg-purple-100 text-purple-800' :
+                               'bg-gray-100 text-gray-800';
+                
+                return `<tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-2 px-3">${index + 1}</td>
+                    <td class="py-2 px-3">${name}</td>
+                    <td class="text-right py-2 px-3 font-medium">${count}개</td>
+                    <td class="text-center py-2 px-3">
+                        <span class="px-2 py-1 rounded-full text-xs ${typeClass}">${type}</span>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function renderTimelineCharts() {
+            // 연도별 AI 서비스 도입 추이 (라인 차트)
+            if (charts.timelineChart) charts.timelineChart.destroy();
+            const ctx1 = document.getElementById('timelineChart').getContext('2d');
+            charts.timelineChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: data.yearData.map(item => item[0]),
+                    datasets: [{
+                        label: '서비스 수',
+                        data: data.yearData.map(item => item[1]),
+                        borderColor: '#00C49F',
+                        backgroundColor: 'rgba(0, 196, 159, 0.1)',
+                        borderWidth: 4,
+                        pointRadius: 8,
+                        pointBackgroundColor: '#00C49F'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 연도별 상세 현황 (막대 차트)
+            if (charts.timelineBarChart) charts.timelineBarChart.destroy();
+            const ctx2 = document.getElementById('timelineBarChart').getContext('2d');
+            charts.timelineBarChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: data.yearData.map(item => item[0]),
+                    datasets: [{
+                        label: '서비스 수',
+                        data: data.yearData.map(item => item[1]),
+                        backgroundColor: '#8884D8'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderYearAnalysis() {
+            const maxCount = Math.max(...data.yearData.map(([,count]) => count));
+            document.getElementById('yearAnalysis').innerHTML = data.yearData.map(([year, count], index) => {
+                const prevCount = index > 0 ? data.yearData[index - 1][1] : 0;
+                const growth = prevCount > 0 ? ((count - prevCount) / prevCount * 100).toFixed(1) : 0;
+                const growthText = index > 0 ? 
+                    `<span class="${growth > 0 ? 'text-green-600' : growth < 0 ? 'text-red-600' : 'text-gray-600'}">
+                        ${growth > 0 ? '+' : ''}${growth}% 증감
+                    </span>` : '';
+                
+                return `<div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                    <div>
+                        <span class="font-bold text-lg">${year}년</span>
+                        <div class="text-sm text-gray-600">${growthText}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-blue-600">${count}개</div>
+                        <div class="w-24 bg-gray-200 rounded-full h-2 mt-1">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: ${(count / maxCount) * 100}%"></div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderTargetCharts() {
+            // 서비스 대상별 분포 (원형 차트)
+            if (charts.targetPieChart) charts.targetPieChart.destroy();
+            const ctx1 = document.getElementById('targetPieChart').getContext('2d');
+            charts.targetPieChart = new Chart(ctx1, {
+                type: 'pie',
+                data: {
+                    labels: data.targets.map(item => item[0]),
+                    datasets: [{
+                        data: data.targets.map(item => item[1]),
+                        backgroundColor: COLORS
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // 서비스 대상별 현황 (막대 차트)
+            if (charts.targetBarChart) charts.targetBarChart.destroy();
+            const ctx2 = document.getElementById('targetBarChart').getContext('2d');
+            charts.targetBarChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: data.targets.map(item => item[0]),
+                    datasets: [{
+                        label: '서비스 수',
+                        data: data.targets.map(item => item[1]),
+                        backgroundColor: '#FFC658'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTargetDetails() {
+            const maxCount = Math.max(...data.targets.map(([,count]) => count));
+            document.getElementById('targetDetails').innerHTML = data.targets.map(([name, count]) => 
+                `<div class="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600 mb-2">${count}개</div>
+                        <div class="text-sm font-medium text-gray-700">${name}</div>
+                        <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: ${(count / maxCount) * 100}%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">${((count / data.total) * 100).toFixed(1)}%</div>
+                    </div>
+                </div>`
+            ).join('');
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            renderOverviewCharts();
+        });
+    </script>
+</body>
+</html>
