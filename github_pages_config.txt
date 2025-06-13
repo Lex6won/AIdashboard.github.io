@@ -1,0 +1,80 @@
+# GitHub Pages 사이트 설정
+title: "경기도 AI 등록제 서비스 현황 대시보드"
+description: "경기도 AI 등록제에 등록된 AI 서비스들의 현황을 한눈에 파악할 수 있는 인터랙티브 대시보드"
+url: "https://yourusername.github.io"
+baseurl: "/gyeonggi-ai-dashboard"
+
+# 작성자 정보
+author:
+  name: "경기도 AI 대시보드팀"
+  email: "contact@example.com"
+
+# GitHub Pages 설정
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# 테마 설정 (선택사항)
+# theme: minima
+
+# 빌드 설정
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# 제외할 파일/폴더
+exclude:
+  - node_modules/
+  - .github/
+  - README_dev.md
+  - package*.json
+  - .gitignore
+  - LICENSE
+
+# 포함할 파일
+include:
+  - _pages
+  - assets
+
+# SEO 설정
+lang: ko
+timezone: Asia/Seoul
+
+# 소셜 미디어
+social:
+  github: yourusername
+  linkedin: yourlinkedin
+
+# Google Analytics (선택사항)
+# google_analytics: UA-XXXXXXXXX-X
+
+# 사이트 메타데이터
+keywords: "경기도, AI, 인공지능, 등록제, 대시보드, 데이터 시각화, 공공서비스"
+categories: ["dashboard", "ai", "government", "data-visualization"]
+
+# 빌드 옵션
+safe: true
+incremental: false
+profile: false
+
+# Liquid 설정
+liquid:
+  error_mode: warn
+  strict_filters: false
+  strict_variables: false
+
+# 컬렉션 설정 (필요시)
+collections:
+  posts:
+    output: true
+    permalink: /:year/:month/:day/:title/
+
+# 기본값
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "admin"

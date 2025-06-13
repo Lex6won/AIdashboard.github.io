@@ -1,0 +1,102 @@
+{
+  "name": "gyeonggi-ai-dashboard",
+  "version": "1.0.0",
+  "description": "경기도 AI 등록제 서비스 현황을 시각화하는 인터랙티브 대시보드",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -c-1",
+    "dev": "http-server -p 3000 -c-1 -o",
+    "build": "npm run validate && npm run optimize",
+    "validate": "npm run validate:html && npm run validate:css && npm run validate:js",
+    "validate:html": "html-validate index.html",
+    "validate:css": "stylelint style.css",
+    "validate:js": "eslint script.js",
+    "optimize": "npm run minify:css && npm run minify:js",
+    "minify:css": "cleancss -o style.min.css style.css",
+    "minify:js": "terser script.js -o script.min.js",
+    "test": "npm run validate",
+    "serve": "python -m http.server 8000",
+    "deploy": "gh-pages -d .",
+    "csv:validate": "node scripts/validate-csv.js",
+    "csv:convert": "node scripts/excel-to-csv.js",
+    "data:update": "npm run csv:convert && npm run csv:validate",
+    "lighthouse": "lighthouse http://localhost:8000 --output=html --output-path=./lighthouse-report.html",
+    "clean": "rm -rf dist/ *.min.css *.min.js lighthouse-report.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/gyeonggi-ai-dashboard.git"
+  },
+  "keywords": [
+    "dashboard",
+    "ai",
+    "artificial-intelligence",
+    "gyeonggi",
+    "government",
+    "data-visualization",
+    "public-service",
+    "korean",
+    "chart",
+    "analytics"
+  ],
+  "author": {
+    "name": "경기도 AI 대시보드팀",
+    "email": "contact@example.com",
+    "url": "https://github.com/yourusername"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/gyeonggi-ai-dashboard/issues"
+  },
+  "homepage": "https://yourusername.github.io/gyeonggi-ai-dashboard",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.2",
+    "eslint": "^8.57.0",
+    "gh-pages": "^6.1.1",
+    "html-validate": "^8.7.4",
+    "http-server": "^14.1.1",
+    "lighthouse": "^11.4.0",
+    "stylelint": "^16.1.0",
+    "terser": "^5.26.0",
+    "xlsx": "^0.18.5"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.1",
+    "papaparse": "^5.4.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "files": [
+    "index.html",
+    "style.css",
+    "script.js",
+    "data.csv",
+    "README.md"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/yourusername"
+  },
+  "contributors": [
+    {
+      "name": "Admin",
+      "email": "admin@example.com",
+      "url": "https://github.com/yourusername"
+    }
+  ],
+  "config": {
+    "port": 8000,
+    "host": "localhost"
+  }
+}

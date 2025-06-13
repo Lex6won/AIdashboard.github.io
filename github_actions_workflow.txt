@@ -1,0 +1,279 @@
+name: 📊 AI 데이터 자동 업데이트
+
+# 트리거 조건
+on:
+  push:
+    branches: [ main ]
+    paths: 
+      - 'data/*.xlsx'
+      - 'data/*.xls'
+      - 'data.csv'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'data/*.xlsx'
+      - 'data/*.xls'
+      - 'data.csv'
+  schedule:
+    # 매월 1일 오전 9시 (한국시간 기준)
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: '강제 업데이트 실행'
+        required: false
+        default: 'false'
+
+# 권한 설정
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# 동시 실행 제한
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # 1단계: 데이터 처리 및 변환
+  process-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🛒 코드 체크아웃
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: 🐍 Python 환경 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: 📦 Python 의존성 설치
+      run: |
+        pip install pandas openpyxl xlrd chardet python-dateutil
+    
+    - name: 🔍 엑셀 파일 확인
+      id: check-excel
+      run: |
+        if ls data/*.xlsx 1> /dev/null 2>&1 || ls data/*.xls 1> /dev/null 2>&1; then
+          echo "excel_found=true" >> $GITHUB_OUTPUT
+          echo "📁 엑셀 파일 발견됨"
+        else
+          echo "excel_found=false" >> $GITHUB_OUTPUT
+          echo "📁 엑셀 파일 없음 - 기존 CSV 사용"
+        fi
+    
+    - name: 🔄 엑셀을 CSV로 변환
+      if: steps.check-excel.outputs.excel_found == 'true'
+      run: |
+        python3 << 'EOF'
+        import pandas as pd
+        import glob
+        import os
+        from datetime import datetime
+        
+        # 가장 최근 엑셀 파일 찾기
+        excel_files = glob.glob('data/*.xlsx') + glob.glob('data/*.xls')
+        if not excel_files:
+            print("엑셀 파일을 찾을 수 없습니다.")
+            exit(1)
+        
+        # 파일 수정 시간 기준으로 정렬
+        latest_file = max(excel_files, key=os.path.getmtime)
+        print(f"📄 처리 중인 파일: {latest_file}")
+        
+        try:
+            # 엑셀 파일 읽기
+            df = pd.read_excel(latest_file, sheet_name='AI 등록제')
+            
+            # 빈 행 제거
+            df = df.dropna(how='all')
+            
+            # 첫 번째 컬럼이 숫자인 행만 필터링 (헤더 제외한 실제 데이터)
+            df_filtered = df[pd.to_numeric(df.iloc[:, 0], errors='coerce').notna()]
+            
+            print(f"📊 총 {len(df_filtered)}개의 AI 서비스 데이터 처리됨")
+            
+            # CSV로 저장
+            df.to_csv('data.csv', index=False, encoding='utf-8-sig')
+            print("✅ CSV 파일 생성 완료: data.csv")
+            
+            # 통계 정보 저장
+            stats = {
+                'total_services': len(df_filtered),
+                'update_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'source_file': os.path.basename(latest_file)
+            }
+            
+            with open('data_stats.txt', 'w', encoding='utf-8') as f:
+                f.write(f"총 서비스 수: {stats['total_services']}\n")
+                f.write(f"업데이트 시간: {stats['update_date']}\n")
+                f.write(f"원본 파일: {stats['source_file']}\n")
+            
+        except Exception as e:
+            print(f"❌ 오류 발생: {str(e)}")
+            exit(1)
+        EOF
+    
+    - name: 📊 데이터 검증
+      run: |
+        if [ -f "data.csv" ]; then
+          lines=$(wc -l < data.csv)
+          echo "📈 CSV 파일 라인 수: $lines"
+          
+          if [ $lines -lt 2 ]; then
+            echo "❌ CSV 파일에 데이터가 부족합니다."
+            exit 1
+          fi
+          
+          echo "✅ 데이터 검증 완료"
+        else
+          echo "❌ CSV 파일이 생성되지 않았습니다."
+          exit 1
+        fi
+    
+    - name: 🎯 변경사항 커밋
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        if [ -f "data_stats.txt" ]; then
+          echo "📋 데이터 통계:"
+          cat data_stats.txt
+        fi
+        
+        # 변경사항이 있는지 확인
+        if git diff --quiet; then
+          echo "📝 변경사항 없음"
+        else
+          git add data.csv data_stats.txt
+          git commit -m "📊 AI 데이터 자동 업데이트 $(date +'%Y-%m-%d %H:%M')" || echo "커밋할 변경사항 없음"
+          git push origin main || echo "푸시할 변경사항 없음"
+        fi
+
+  # 2단계: GitHub Pages 배포
+  deploy:
+    needs: process-data
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: 🛒 코드 체크아웃
+      uses: actions/checkout@v4
+      with:
+        ref: main
+    
+    - name: 🔧 Pages 설정
+      uses: actions/configure-pages@v4
+    
+    - name: 📦 아티팩트 업로드
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+    
+    - name: 🚀 GitHub Pages 배포
+      id: deployment
+      uses: actions/deploy-pages@v4
+    
+    - name: 🎉 배포 완료 알림
+      run: |
+        echo "🎉 배포 완료!"
+        echo "🔗 사이트 URL: ${{ steps.deployment.outputs.page_url }}"
+        
+        if [ -f "data_stats.txt" ]; then
+          echo "📊 최신 데이터 현황:"
+          cat data_stats.txt
+        fi
+
+  # 3단계: 배포 후 검증
+  verify-deployment:
+    needs: deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🔍 사이트 접근성 확인
+      run: |
+        sleep 30  # 배포 완료 대기
+        
+        SITE_URL="${{ needs.deploy.outputs.page_url }}"
+        
+        if [ -n "$SITE_URL" ]; then
+          echo "🌐 사이트 확인 중: $SITE_URL"
+          
+          # HTTP 상태 코드 확인
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$SITE_URL" || echo "000")
+          
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ 사이트가 정상적으로 접근 가능합니다."
+          else
+            echo "⚠️ 사이트 접근 상태: $STATUS"
+          fi
+        else
+          echo "⚠️ 배포 URL을 확인할 수 없습니다."
+        fi
+    
+    - name: 📧 Slack 알림 (선택사항)
+      if: always()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      run: |
+        if [ -n "$SLACK_WEBHOOK" ]; then
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" = "success" ]; then
+            MESSAGE="✅ 경기도 AI 대시보드 업데이트 성공!"
+          else
+            MESSAGE="❌ 경기도 AI 대시보드 업데이트 실패!"
+          fi
+          
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"$MESSAGE\"}" \
+            "$SLACK_WEBHOOK"
+        fi
+
+# 에러 발생 시 이슈 자동 생성
+  create-issue-on-failure:
+    if: failure()
+    needs: [process-data, deploy, verify-deployment]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📝 실패 이슈 생성
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 자동 데이터 업데이트 실패',
+            body: `
+            ## 📊 데이터 업데이트 실패 리포트
+            
+            **실행 시간**: ${new Date().toLocaleString('ko-KR')}
+            **워크플로**: ${context.workflow}
+            **실행 ID**: ${context.runId}
+            
+            ### 📋 실패 정보
+            - **트리거**: ${context.eventName}
+            - **브랜치**: ${context.ref}
+            - **커밋**: ${context.sha.substring(0, 7)}
+            
+            ### 🔧 해결 방법
+            1. [워크플로 로그 확인](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            2. 데이터 파일 형식 검증
+            3. 수동으로 다시 실행
+            
+            ### 📞 담당자
+            @yourusername
+            
+            ---
+            *이 이슈는 자동으로 생성되었습니다.*
+            `,
+            labels: ['bug', 'automation', 'high-priority']
+          })

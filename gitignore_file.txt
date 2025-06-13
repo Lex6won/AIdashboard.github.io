@@ -1,0 +1,138 @@
+# 의존성 및 패키지
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 빌드 결과물
+dist/
+build/
+*.min.css
+*.min.js
+*.map
+
+# 환경 설정
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 로그 파일
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 임시 파일
+.tmp/
+temp/
+*.tmp
+*.temp
+*~
+
+# 캐시
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# 에디터 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 운영체제 파일
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 백업 파일
+*.bak
+*.backup
+*.old
+
+# 데이터 파일 (민감정보 포함 가능)
+data/원본/
+data/private/
+*.xlsx.backup
+*.xls.backup
+
+# 테스트 및 리포트
+coverage/
+.nyc_output/
+lighthouse-report.html
+test-results/
+*.test.js.snap
+
+# Python (데이터 처리 스크립트용)
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 프로덕션 빌드
+/build
+/dist
+
+# 개발 도구
+.firebase/
+.vercel/
+.netlify/
+
+# GitHub Pages 로컬 빌드
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Secrets
+secrets.json
+config.private.json
+
+# 로컬 개발용 파일
+local-*.html
+test-*.html
+debug-*.js
+
+# 압축 파일
+*.zip
+*.tar.gz
+*.rar
+
+# 문서 임시 파일
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# 커밋하지 않을 로컬 설정
+local.config.js
+development.config.js
+
+# 성능 측정 파일
+*.prof
+*.heap
+
+# 기타
+.history/
+*.orig
